@@ -67,7 +67,8 @@ public class TeamHandler {
   public Mono<ServerResponse> watchTeam(ServerRequest request) {
     String teamName = request.pathVariable("name");
     Flux<ServerSentEvent<Team>> sse = this.teamWatcher.watchForTeamChanges(teamName)
-                                  .map(team -> ServerSentEvent.<Team>builder()
+                                  .map(team -> ServerSentEvent
+                                        .<Team>builder()
                                         .data(team)
                                         .build());
     return ServerResponse
@@ -76,13 +77,13 @@ public class TeamHandler {
   }
 
   public Mono<ServerResponse> watchTeams(ServerRequest request) {
-    Flux<ServerSentEvent<Team>> sse = this.teamWatcher.watchForTeamCollectionChange()
+    Flux<ServerSentEvent<Team>> sse = this.teamWatcher.watchForTeamCollectionChange().log("Watch Teams")
                                   .map(team -> ServerSentEvent.<Team>builder()
                                         .data(team)
                                         .build());
     return ServerResponse
             .ok()
-            .body(BodyInserters.fromServerSentEvents(sse));
+            .body(BodyInserters.fromServerSentEvents(sse)).log();
   }
 
   public Mono<ServerResponse> allZero(ServerRequest request) {

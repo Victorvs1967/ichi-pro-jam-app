@@ -26,10 +26,15 @@ public class TeamWatcher {
   }
 
   public Flux<Team> watchForTeamChanges(String teamName) {
-    ChangeStreamOptions options = ChangeStreamOptions.builder()
-                          .filter(Aggregation.newAggregation(Team.class, Aggregation.match(Criteria.where("operationType").is("replace")
-                                  )
-                          )).returnFullDocumentOnUpdate().build();
+    ChangeStreamOptions options = ChangeStreamOptions
+                          .builder()
+                          .filter(Aggregation
+                                  .newAggregation(Team.class, Aggregation
+                                                    .match(Criteria
+                                                            .where("operationType")
+                                                            .is("update"))))
+                          .returnFullDocumentOnUpdate()
+                          .build();
 
     return reactiveMongoTemplate.changeStream("teams", options, Team.class)
             .map(ChangeStreamEvent::getBody)
@@ -38,10 +43,15 @@ public class TeamWatcher {
   }
 
   public Flux<Team> watchForTeamCollectionChange() {
-    ChangeStreamOptions options = ChangeStreamOptions.builder()
-                          .filter(Aggregation.newAggregation(Team.class, Aggregation.match(Criteria.where("operationType").is("replace")
-                              )
-                          )).returnFullDocumentOnUpdate().build();
+    ChangeStreamOptions options = ChangeStreamOptions
+                          .builder()
+                          .filter(Aggregation
+                                  .newAggregation(Team.class, Aggregation
+                                                    .match(Criteria
+                                                            .where("operationType")
+                                                            .is("update"))))
+                          .returnFullDocumentOnUpdate()
+                          .build();
     return reactiveMongoTemplate.changeStream("teams", options, Team.class)
             .map(ChangeStreamEvent::getBody)
             .doOnError(throwable -> log.error("Error with the teams changestream event: " + throwable.getMessage(), throwable));
